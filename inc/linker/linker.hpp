@@ -20,25 +20,18 @@ public:
                 file_names(f_names), output_file(o_file), section_placements(s_placements) {} 
 
         int32_t writeExecutable();
-        int32_t writeRelocatable();
         static void writeHelp();
 protected:
         /* pass file descriptions which contain that section */
-        int32_t placeSection(std::vector<FileArgs>& file_args, std::string section_name, uint32_t address, SecType type);
-        int32_t placeRelocs(std::vector<FileArgs>& file_args, std::string target_section);
+        int32_t placeSection(std::vector<FileArgs>& file_args, std::string section_name, uint32_t address);
         int32_t __placeSection(SecEntry& section, MemTab& sec_mem,uint32_t address);
         int32_t __addSymbol(SymEntry& symbol);
         int32_t __addSymbol(SecEntry& section);
-        int32_t readFile(std::vector<FileArgs>& file_args);
-        int32_t __section(std::string section_name, SecType type);
-        int32_t init_mem(const char* buf, int32_t size, std::string section);
-        void __writeStrtab();
-        void __writeSymtab();
 private:
         SymTab symbol_table;
         SecTab section_table;
         MemTab memory_table;
-        RelaTab relocation_table; 
+        RelaTab relocation_table; /* if i ever to relocatable */
         std::vector<std::string> file_names;
         std::string output_file;
         std::map<uint32_t, std::string> section_placements;

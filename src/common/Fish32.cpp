@@ -180,7 +180,7 @@ int32_t Fish32::__writeLinkable(std::ofstream& write_file, const SymTab& symbol_
         for(auto next_name : write_order) {
                 if(mem_init.count(next_name)) {
                         auto& ss = mem_init.at(next_name);
-                        int64_t ss_size = section_table.at(next_name).size;
+                        int64_t ss_size = ss->tellp();
                         std::vector<uint8_t> buff(ss_size);
                         ss->read(reinterpret_cast<char*>(&buff[0]), ss_size);
                         write_file.write(reinterpret_cast<const char*>(&buff[0]), ss_size);

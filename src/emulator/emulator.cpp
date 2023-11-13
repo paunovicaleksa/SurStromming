@@ -25,7 +25,6 @@ int32_t Emulator::emulate() {
         }
 
         bool halt = false;
-        terminal = new Terminal();
         while(!halt) {
                 uint32_t temp;
                 uint32_t instruction = fetchInstruction();
@@ -161,33 +160,13 @@ int32_t Emulator::emulate() {
                                 break; 
                         default:
                                 /* invalid instruction interrupt */
-                                CPU.GPR[SP] -= 4;
-                                writeMemory32(CPU.GPR[SP], CPU.CSR[STATUS]);
-                                CPU.GPR[SP] -= 4;
-                                writeMemory32(CPU.GPR[SP], CPU.GPR[PC]);
-                                CPU.CSR[STATUS] = CPU.CSR[STATUS] & (~0x1u);
                                 CPU.CSR[CAUSE] = 1;
                                 CPU.GPR[PC] = CPU.CSR[HANDLER];
                                 break;
                 }
                 CPU.GPR[R0] = 0;
-                if(terminalInterrupt()) {
-                        CPU.GPR[SP] -= 4;
-                        writeMemory32(CPU.GPR[SP], CPU.CSR[STATUS]);
-                        CPU.GPR[SP] -= 4;
-                        writeMemory32(CPU.GPR[SP], CPU.GPR[PC]);
-                        CPU.CSR[STATUS] = CPU.CSR[STATUS] & (~0x1u);
-                        CPU.CSR[CAUSE] = 3;
-                        CPU.GPR[PC] = CPU.CSR[HANDLER];
-                }
-
-                if(memory[TERM_OUT] != 0) {
-                        terminal->putChar(memory[TERM_OUT]);
-                        memory[TERM_OUT] = 0;
-                }
         }
-        delete terminal;
-        std::cout << std::endl;
+
         writeProcessorState();
         return 0;
 }
@@ -248,13 +227,4 @@ void Emulator::writeMemory32(uint32_t address, uint32_t value) {
         memory[address + 1] = static_cast<uint8_t>((value >> 8) & 0xff);
         memory[address + 2] = static_cast<uint8_t>((value >> 16) & 0xff);
         memory[address + 3] = static_cast<uint8_t>((value >> 24) & 0xff);
-}
-
-int32_t Emulator::terminalInterrupt() {
-        char c;
-        if(terminal->getChar(&c)) {
-                memory[TERM_IN] = c;
-                return 1;
-        } 
-        return 0;
 }

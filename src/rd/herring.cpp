@@ -152,7 +152,7 @@ void Herring::__writeExecMem() {
 
 void Herring::__writeLinkMem() {
         for(auto s : mem_init) {
-                std::cout << "memory contents for section: " << std::hex << s.first << std::endl;
+                std::cout << "Memory contents for section: " << std::hex << s.first << std::endl;
                 uint32_t start_address = 0;
                 std::vector<uint8_t> data(s.second->tellp());
                 s.second->read(reinterpret_cast<char*>(&data[0]), data.size());

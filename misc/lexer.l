@@ -13,8 +13,7 @@
 /*generally useful regular expressions*/
 
 WHS     [ \t\r]
-STR     [^,\+\n\[\]\$\t\r:" ]+
-ASCII_STR       ["]([^"\\\n]|\\(.|\n))*["] 
+STR     [^,\+\n\[\]\$\t\r: ]+
 /* string should contain no special characters, excluding a "." for section names */
 
 /*syntactically imporant regular expressions*/
@@ -153,10 +152,6 @@ END "\.end"
 {STR}   {
                 yylval.s_val = strdup(yytext);
                 return STRING;
-        }
-{ASCII_STR} {
-                yylval.s_val = strdup(yytext);
-                return ASCII_STRING;
         }
 
 [\n]    { return ENDL; }

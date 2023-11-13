@@ -356,7 +356,6 @@ int32_t Assembler::initSymbol(std::string symbol_name, std::string section) {
        /* if symbol bind is ABS, reloc is not needed! */ 
         auto& sym = sym_tab[symbol_name];
         
-        
         auto reloc_entry = RelocEntry {
                 offset : location_counter,
                 symbol_index : sym.bind == LOCAL_BIND? sym_tab[sym.section].symbol_index : sym.symbol_index,
@@ -465,7 +464,7 @@ void Assembler::__writeStrtab() {
                 sec_tab[shstrtab].size += s.first.size() + 1;
         }
 }
-/* vrv nepotrebno!! i vr cemo izbaciti */
+
 void Assembler::__writeSymtab() {
         SecEntry& symtab_section = sec_tab[symtab];
         symtab_section.link = sec_tab[strtab].section_index;
@@ -475,48 +474,4 @@ void Assembler::__writeSymtab() {
                 __init_mem(reinterpret_cast<const char*>(&s.second), sizeof(s.second) - 2 * sizeof(std::string), symtab); 
                 symtab_section.size += sizeof(s.second) - 2 * (sizeof(std::string));
         }
-}
-
-int32_t Assembler::initAscii(std::string asciistr) {
-        if(current_section == "") return 1;
-        asciistr.erase(std::remove(asciistr.begin(), asciistr.end(), '\"'), asciistr.end());
-        std::string outstr = "";
-        for(int32_t i = 0; i < asciistr.size(); i++) {
-                if(asciistr[i] == '\\' && i != asciistr.size() - 1) {
-                        switch (asciistr[i+1]) {
-                                case 'n':
-                                        outstr += '\n';
-                                        i++;
-                                        break;
-                                case 't':
-                                        outstr += '\t';
-                                        i++;
-                                        break;
-                                case 'b':
-                                        outstr += '\b';
-                                        i++;
-                                        break;
-                                case 'r':
-                                        outstr += '\r';
-                                        i++;
-                                        break;
-                                case '0':
-                                        outstr += '\0';
-                                        i++;
-                                        break;
-                                case '\\':
-                                        i++;
-                                default:
-                                        outstr += '\\';
-                                        break;
-                        } 
-                } else {
-                        outstr += asciistr[i];
-                }
-        }
-
-        if(pass == 2) __init_mem(outstr.c_str(), outstr.size(), current_section);
-        location_counter += outstr.size();
-
-        return 0;
 }

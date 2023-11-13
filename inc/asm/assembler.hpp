@@ -44,7 +44,6 @@ public:
         int32_t initSymbol(std::string symbol_name, std::string section);
         int32_t initWords(std::deque<ParserArg>& word_args);
         int32_t initSkip(uint32_t cnt);
-        int32_t initAscii(std::string);
 
         int32_t initInstruction(InstrDesc instruction);
 protected:

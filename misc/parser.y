@@ -16,7 +16,6 @@
   std::deque<ParserArg> parser_args;
   extern Assembler* asem;
   void yyerror(const char *s);
-  int32_t i = 0;
 %}
 
 %output "misc/parser.hpp"
@@ -61,7 +60,7 @@
 %token SECTION WORD
 %token SKIP END
 %token ASCII EQU
-%token <s_val>ASCII_STRING
+
 
 %%
 
@@ -118,10 +117,6 @@ instr:
         load
         ;
 direc:
-        ASCII ASCII_STRING ENDLS {
-                if(asem->initAscii($2)) { YYERROR; };
-        }
-        |
         END {
                 asem->endPass();
                 YYACCEPT;

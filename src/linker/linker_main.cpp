@@ -9,7 +9,6 @@ int main(int argc, char* argv[]) {
                 {"hex", no_argument, 0, 'x'},
                 {"place", required_argument, 0, 'p'},
                 {"out", required_argument, 0, 'o'},
-                {"relocatable", no_argument, 0, 'r'},
                 {0, 0, 0, 0}
         };
 
@@ -18,7 +17,7 @@ int main(int argc, char* argv[]) {
         std::string option_arg;
         std::string output_file = "";
         uint64_t pos;
-        bool show_help = false, hex = false, place = false, relocatable = false;
+        bool show_help = false, hex = false, place = false;
         while((iarg = getopt_long_only(argc, argv, "o:hxp:", longopts, nullptr)) != -1) {
                 switch(iarg) {
                         case 'o':
@@ -43,9 +42,6 @@ int main(int argc, char* argv[]) {
                                         return 1;
                                 }
                                 break;
-                        case 'r':
-                                relocatable = true;
-                                break;
                         default:
                                 Linker::writeHelp();
                                 return 1;
@@ -53,7 +49,7 @@ int main(int argc, char* argv[]) {
                 }
         }
 
-        if(optind == argc || output_file == "" || (relocatable == hex)) {
+        if(optind == argc || output_file == "") {
                 Linker::writeHelp();
                 return 1;
         }
@@ -65,7 +61,4 @@ int main(int argc, char* argv[]) {
 
         Linker linker(input_files, output_file, place_args);
         if(hex) linker.writeExecutable();
-        if(relocatable) linker.writeRelocatable();
-
-        return 0;
 }
