@@ -32,4 +32,15 @@ Each tool comes with its unique set of options, to view those options run the fo
 ./herring --help
 ```
 
+## Testing
+
+Navigate to the ```test``` directory for both level A and B tests. To run the level A test, use:
+```bash
+cd test/nivo-a && ./start.sh
+```
+For level B test:
+```bash
+cd test/nivo-b && ./start.sh
+```
+
 
