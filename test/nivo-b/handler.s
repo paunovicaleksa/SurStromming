@@ -3,7 +3,8 @@
 .global handler
 .section my_handler
 handler:
-    push {%r1, %r2}
+    push %r1
+    push %r2
     csrrd %cause, %r1
     ld $2, %r2
     beq %r1, %r2, handle_timer

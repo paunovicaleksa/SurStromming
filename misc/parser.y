@@ -35,7 +35,6 @@
 %token COMMA
 %token ENDL 
 %token COLON
-%token LCURLY RCURLY
 %token DOLLAR
 %token SQUARE_LEFT
 %token SQUARE_RIGHT
@@ -61,7 +60,7 @@
 %token GLOBAL EXTERN 
 %token SECTION WORD
 %token SKIP END
-%token ASCII SET 
+%token ASCII EQU
 %token <s_val>ASCII_STRING
 
 %%
@@ -119,10 +118,6 @@ instr:
         load
         ;
 direc:
-        SET STRING COMMA INTEGER ENDLS {
-                
-        }
-        |
         ASCII ASCII_STRING ENDLS {
                 if(asem->initAscii($2)) { YYERROR; };
         }
@@ -342,27 +337,8 @@ store:
                 parser_args.pop_front();
         }
         |
-        ST REGISTER COMMA SQUARE_LEFT REGISTER PLUS REGISTER SQUARE_RIGHT ENDLS {
-                if(asem->initInstruction({ST_REG_IND_DISP_ASM, $5, $7, $2, {"", 0, REG_ARG}})) { YYERROR; }
-        }
-        |
         PUSH REGISTER ENDLS {
                 if(asem->initInstruction({PUSH_ASM, 14, 0, $2, {"", static_cast<uint32_t>(-4), LITERAL_ARG}})) { YYERROR; }
-        }
-        |
-        PUSH LCURLY REGS RCURLY ENDLS {
-                if(asem->getPass() == 1) asem->incCounter(-4);
-        }
-        ;
-REGS:
-        REGS COMMA REGISTER {
-                if(asem->initInstruction({PUSH_ASM, 14, 0, $3, {"", static_cast<uint32_t>(-4), LITERAL_ARG}})) { YYERROR; }
-                if(asem->getPass() == 1) asem->incCounter(4);
-        }
-        |
-        REGISTER {
-                if(asem->initInstruction({PUSH_ASM, 14, 0, $1, {"", static_cast<uint32_t>(-4), LITERAL_ARG}})) { YYERROR; }
-                if(asem->getPass() == 1) asem->incCounter(4);
         }
         ;
 load:
@@ -389,10 +365,6 @@ load:
         LD SQUARE_LEFT REGISTER PLUS ARG SQUARE_RIGHT COMMA REGISTER ENDLS {
                 if(asem->initInstruction({LD_REG_IND_DISP_ASM, $8, $3, 0, parser_args.front()})) { YYERROR; }
                 parser_args.clear();
-        }
-        |
-        LD SQUARE_LEFT REGISTER PLUS REGISTER SQUARE_RIGHT COMMA REGISTER ENDLS {
-                if(asem->initInstruction({LD_REG_IND_DISP_ASM, $8, $3, $5, {"", 0, REG_ARG}})) { YYERROR; }
         }
         |
         POP REGISTER ENDLS {

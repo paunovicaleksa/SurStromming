@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
                                 if(pos != std::string::npos) {
                                         uint32_t address = std::stol(option_arg.substr(pos + 1), nullptr, 16);
                                         std::string section_name = option_arg.substr(0, pos);
-                                        place_args.insert(std::make_pair(address, section_name));
+                                        place_args.insert(std::pair(address, section_name));
                                 } else {
                                         Linker::writeHelp();
                                         return 1;

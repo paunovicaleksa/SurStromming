@@ -3,7 +3,7 @@
 #include "../../inc/asm/assembler.hpp"
 #include <algorithm>
 #include "../../inc/common/Fish32.hpp"
-/* should be rewritten. in RUST??? >:D */
+/* should be rewritten. */
 
 int32_t Linker::writeExecutable() {
         std::vector<FileArgs> file_args;
@@ -46,7 +46,7 @@ int32_t Linker::writeExecutable() {
                         }
                         current_symbol.value = section_table[current_symbol.section].offset + current_symbol.value;
                         current_symbol.symbol_index = symbol_table_index++;
-                        symbol_table.insert(std::make_pair(current_symbol.symbol_name, current_symbol));
+                        symbol_table.insert(std::pair(current_symbol.symbol_name, current_symbol));
                 }
         }
 
@@ -90,11 +90,11 @@ int32_t Linker::writeExecutable() {
 
         return 0;
 }
-
+/* maybe send a ref to a vector with all the elements with that name?? */
 int32_t Linker::__placeSection(SecEntry& section, MemTab& sec_mem, uint32_t address) {
         if(!memory_table.count(section.section_name)) {
                 auto ss = std::make_shared<std::stringstream>();
-                memory_table.insert(std::make_pair(section.section_name, ss));
+                memory_table.insert(std::pair(section.section_name, ss));
         }
 
         if(sec_mem.count(section.section_name)) {
@@ -118,7 +118,7 @@ int32_t Linker::__addSymbol(SecEntry& section) {
                 section : section.section_name
         };
 
-        symbol_table.insert(std::make_pair(section.section_name, section_symbol));
+        symbol_table.insert(std::pair(section.section_name, section_symbol));
         return 0;
 }
 
@@ -158,7 +158,7 @@ int32_t Linker::placeSection(std::vector<FileArgs>& file_args, std::string secti
                         std::cout << "Could not place section " << current_section.section_name << std::endl;
                         return 1;
                 }
-
+                
                 for(auto& sym_entry : file_symbol_table) {
                         if(sym_entry.second.section == section_name) { 
                                 sym_entry.second.value += shift; 
@@ -184,8 +184,7 @@ int32_t Linker::placeSection(std::vector<FileArgs>& file_args, std::string secti
         }
 
         placement_address = address;
-        if(address > 0xFFFFFF00u) return 1;
-        section_table.insert(std::make_pair(current_section.section_name, current_section));
+        section_table.insert(std::pair(current_section.section_name, current_section));
         __addSymbol(current_section);
 
         return 0;
@@ -227,7 +226,7 @@ int32_t Linker::writeRelocatable() {
                         current_symbol.value = section_table[current_symbol.section].offset + current_symbol.value;
                         current_symbol.symbol_index = symbol_table_index++;
                         current_symbol.section_entry = section_table[current_symbol.section].section_index;
-                        symbol_table.insert(std::make_pair(current_symbol.symbol_name, current_symbol));
+                        symbol_table.insert(std::pair(current_symbol.symbol_name, current_symbol));
                 }
         }
 
@@ -238,7 +237,7 @@ int32_t Linker::writeRelocatable() {
                                 current_symbol.symbol_index = symbol_table_index++;
                                 current_symbol.section = "";
                                 current_symbol.section_entry = section_table[current_symbol.section].section_index;
-                                symbol_table.insert(std::make_pair(current_symbol.symbol_name, current_symbol));
+                                symbol_table.insert(std::pair(current_symbol.symbol_name, current_symbol));
                         }
                 }
         }
@@ -280,7 +279,7 @@ int32_t Linker::placeRelocs(std::vector<FileArgs>& file_args, std::string target
                 rela.symbol_index = symbol_table[rela.symbol_name].symbol_index;
         }
 
-        relocation_table.insert(std::make_pair(rela_name, relas));
+        relocation_table.insert(std::pair(rela_name, relas));
         __section(rela_name, RELA_SECTION);
         section_table[rela_name].link = section_table[target_section].section_index;
 
@@ -333,7 +332,7 @@ int32_t Linker::__section(std::string section_name, SecType type) {
                         section_name : section_name,
                 };
 
-                section_table.insert(std::make_pair(section_name, entry));
+                section_table.insert(std::pair(section_name, entry));
                 if(type == PROGBITS_SECTION || type == NULL_SECTION) {
                         __addSymbol(entry);
                 }

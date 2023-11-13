@@ -181,7 +181,7 @@ int32_t Assembler::__displacement(uint8_t opcode, InstrDesc instruction) {
         uint32_t pool_value;
         if(arg.arg_type == SYMBOL_ARG && !symbol_pool.count(arg.symbol)) {
                 int32_t index = literal_pool.size();
-                symbol_pool.insert(std::make_pair(arg.symbol, index));
+                symbol_pool.insert(std::pair(arg.symbol, index));
                 SymEntry sym = sym_tab[arg.symbol];
                 RelocEntry rela_entry = {
                         offset : sec_tab[current_section].size + static_cast<uint32_t>(literal_pool.size()) * 4,
@@ -258,7 +258,7 @@ int32_t Assembler::addSymbol(std::string sym_name ,SymBind bind, bool is_definit
                         section : is_definition? current_section : ""
                 };
 
-                sym_tab.insert(std::make_pair(sym_name, entry));
+                sym_tab.insert(std::pair(sym_name, entry));
                 return 0;
         } 
         
@@ -317,7 +317,7 @@ int32_t Assembler::__section(std::string section_name, SecType type) {
                         section_name : section_name,
                 };
 
-                sec_tab.insert(std::make_pair(section_name, entry));
+                sec_tab.insert(std::pair(section_name, entry));
 
                 if((type == PROGBITS_SECTION || type == NULL_SECTION) && addSymbol(section_name, GLOBAL_BIND, true, SECTION_TYPE)) {
                         return 1;
@@ -356,6 +356,7 @@ int32_t Assembler::initSymbol(std::string symbol_name, std::string section) {
        /* if symbol bind is ABS, reloc is not needed! */ 
         auto& sym = sym_tab[symbol_name];
         
+        
         auto reloc_entry = RelocEntry {
                 offset : location_counter,
                 symbol_index : sym.bind == LOCAL_BIND? sym_tab[sym.section].symbol_index : sym.symbol_index,
@@ -385,7 +386,6 @@ int32_t Assembler::__init_mem(const char* buf, int32_t size, std::string section
         if(buf == nullptr) {
                 return 1;
         }
-
 
         if(!mem_init.count(section_name)) {
                 auto ss = std::make_shared<std::stringstream>();
@@ -442,7 +442,6 @@ void Assembler::endPass() {
         if(pass == 2 && current_section != "") {
                 __init_mem(reinterpret_cast<const char*>(&literal_pool[0]), literal_pool.size() * 4, current_section);
                 sec_tab[current_section].size += literal_pool.size() * 4;
-                /* check section size */
                 literal_pool.clear();
                 symbol_pool.clear();
         }
@@ -466,7 +465,7 @@ void Assembler::__writeStrtab() {
                 sec_tab[shstrtab].size += s.first.size() + 1;
         }
 }
-
+/* vrv nepotrebno!! i vr cemo izbaciti */
 void Assembler::__writeSymtab() {
         SecEntry& symtab_section = sec_tab[symtab];
         symtab_section.link = sec_tab[strtab].section_index;

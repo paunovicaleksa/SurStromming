@@ -243,7 +243,7 @@ int32_t Fish32::__readLinkable(std::ifstream& read_file, SymTab& symbol_table, S
 
         for(auto& s : sec_entries) {
                 s.section_name = section_names[s.name_entry];
-                section_table.insert(std::make_pair(s.section_name, s));
+                section_table.insert(std::pair(s.section_name, s));
         }
         /* read symbols!!! */
         read_file.seekg(sym_tab.offset);
@@ -266,7 +266,7 @@ int32_t Fish32::__readLinkable(std::ifstream& read_file, SymTab& symbol_table, S
                 sym.section = std::find_if(sec_entries.begin(), 
                                            sec_entries.end(), 
                                            [&cs = sym.section_entry](SecEntry& ns) -> bool {return cs == ns.section_index; })->section_name;
-                symbol_table.insert(std::make_pair(sym.symbol_name, sym));
+                symbol_table.insert(std::pair(sym.symbol_name, sym));
         }
 
         /* read other sections into mem_init, linker will use this. somehow */
@@ -283,7 +283,7 @@ int32_t Fish32::__readLinkable(std::ifstream& read_file, SymTab& symbol_table, S
                         }
                 }
         }
-
+        /* read rela sections, separately because i said so */
         for(auto& rela : rela_sections) {
                 std::vector<RelocEntry> reloc_entries;
                 RelocEntry temp_entry;
@@ -296,7 +296,7 @@ int32_t Fish32::__readLinkable(std::ifstream& read_file, SymTab& symbol_table, S
                        reloc_entries.push_back(temp_entry);
                 }
                 mem_init[rela.section_name]->seekg(std::ios::beg);
-                rela_tab.insert(std::make_pair(rela.section_name, reloc_entries));
+                rela_tab.insert(std::pair(rela.section_name, reloc_entries));
         }
         return 0;
 }

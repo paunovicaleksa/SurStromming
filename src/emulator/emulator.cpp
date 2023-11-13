@@ -171,7 +171,7 @@ int32_t Emulator::emulate() {
                                 break;
                 }
                 CPU.GPR[R0] = 0;
-                if(terminalInterrupt() && !(CPU.CSR[STATUS] & 0b110)) {
+                if(terminalInterrupt()) {
                         CPU.GPR[SP] -= 4;
                         writeMemory32(CPU.GPR[SP], CPU.CSR[STATUS]);
                         CPU.GPR[SP] -= 4;
@@ -181,7 +181,7 @@ int32_t Emulator::emulate() {
                         CPU.GPR[PC] = CPU.CSR[HANDLER];
                 }
 
-                if(memory[TERM_OUT] != 0 ) {
+                if(memory[TERM_OUT] != 0) {
                         terminal->putChar(memory[TERM_OUT]);
                         memory[TERM_OUT] = 0;
                 }
@@ -232,7 +232,6 @@ void Emulator::writeProcessorState() {
                 }
         }
 }
-
 
 uint32_t Emulator::readMemory32(uint32_t address) {
         uint32_t big_endian;

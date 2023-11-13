@@ -62,7 +62,7 @@ EMULATOR_OBJ = $(patsubst $(EMULATOR_DIR)/%.cpp, $(OBJ_DIR)/%.o, $(EMULATOR_SRCS
 EMULATOR_OBJ += $(COM_OBJ)
 
 #compile with g++
-CXX = g++ -std=c++17
+CXX = g++
 CXXFLAGS = -I$(ASM_INC_DIR)
 COM_FLAGS = -I$(COM_INC_DIR)
 MISC_FLAGS = -I$(MISC_DIR)
@@ -121,7 +121,7 @@ $(FLEX_OUTPUT): $(FLEX_INPUT)
 
 
 clean: 
-	rm -rf assembler emulator herring linker
+	rm -rf assembler
 	rm -rf $(OBJ_DIR)
 	rm -f $(MISC_DIR)/*.hpp $(MISC_DIR)/*.cpp
 	

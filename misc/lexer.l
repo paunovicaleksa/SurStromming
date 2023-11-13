@@ -13,13 +13,11 @@
 /*generally useful regular expressions*/
 
 WHS     [ \t\r]
-STR     [^,\+\n\[\]\{\}\$\t\r:" ]+
+STR     [^,\+\n\[\]\$\t\r:" ]+
 ASCII_STR       ["]([^"\\\n]|\\(.|\n))*["] 
 /* string should contain no special characters, excluding a "." for section names */
 
 /*syntactically imporant regular expressions*/
-LEFT_CURLY      "{"
-RIGHT_CURLY     "}"
 COLON     ":"
 COM   "#"[^\n\r]* 
 COMMA   ","
@@ -66,7 +64,7 @@ SECTION "\.section"
 WORD "\.word"
 SKIP "\.skip"
 ASCII "\.ascii"
-SET "\.set"
+EQU "\.equ"
 END "\.end"
 
 
@@ -108,7 +106,7 @@ END "\.end"
 {WORD}    { return WORD; }
 {SKIP}    { return SKIP; }
 {ASCII}   { return ASCII; }
-{SET}     { return SET; }
+{EQU}     { return EQU; }
 
 {DOLLAR} {
                 return DOLLAR;
@@ -120,14 +118,6 @@ END "\.end"
 
 {SQUARE_RIGHT} {
                 return SQUARE_RIGHT;
-        }
-
-{RIGHT_CURLY} {
-                return RCURLY;
-        }
-
-{LEFT_CURLY} {
-                return LCURLY;
         }
 
 {PLUS} {
